@@ -1,5 +1,6 @@
+const {writeFile, copyFile} = require('./utils/generate-site.js');
+const generatePage = require('./src/generate-portfolio.js');
 const inquirer = require('inquirer');
-const Choices = require('inquirer/lib/objects/choices');
 const promptUser = () => {
     return inquirer.prompt([{
         type: 'input',
@@ -128,14 +129,18 @@ const promptProject = portfolioData => {
 promptUser()
 .then(promptProject)
 .then(portfolioData => {
-    console.log(portfolioData);
-});
-
-// const fs = require('fs');
-// const generatePage = require('./src/generate-portfolio');
-
-// fs.writeFile('index.html', generatePage(firstName, github), err => {
-//     if (err) throw err;
-
-//     console.log('Portfolio complete! Check out index.html to see the output!');
-// })
+    return generatePage(portfolioData);
+})
+.then(pageHTML => {
+    return writeFile(pageHTML);
+})
+.then(writeFileResponse => {
+    console.log(writeFileResponse);
+    return copyFile();
+})
+.then(copyFileResponse => {
+    console.log(copyFileResponse);
+})
+.catch(err => {
+    console.log(err);
+})
